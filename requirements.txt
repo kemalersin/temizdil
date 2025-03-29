@@ -1,0 +1,9 @@
+pandas
+numpy
+scikit-learn
+transformers
+datasets
+flask
+mysql-connector-python
+python-dotenv
+redis

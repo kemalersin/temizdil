@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temiz Dil API - Yönetici Paneli</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3b82f6',
+                        secondary: '#64748b',
+                        dark: '#1e293b',
+                        light: '#f8fafc',
+                        danger: '#ef4444',
+                        success: '#22c55e',
+                        warning: '#f59e0b',
+                    }
+                }
+            }
+        }  
+    </script>
+</head>
+<body class="min-h-screen" data-logged-in="{{ 'true' if logged_in else 'false' }}">
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+    </div>
+
+    <!-- Page Content -->
+    <div id="page-content" style="display: none;">
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-dark mb-2">Temiz Dil API</h1>
+            <h2 class="text-2xl text-secondary mb-2">Yönetici Paneli</h2>
+            <p class="text-gray-500">Hoş geldiniz, <span class="font-medium">Yönetici</span></p>
+        </header>
+
+        <main>
+            {% if not logged_in %}
+                <!-- Giriş Formu -->
+                <div class="bg-white rounded-lg shadow-md mb-6 overflow-hidden" id="admin-login-card">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-xl font-semibold text-dark">Yönetici Girişi</h3>
+                    </div>
+                    <div class="p-6">
+                        <form id="admin-login-form" method="POST" action="/admin/login">
+                            <div class="mb-4">
+                                <label for="password" class="block mb-2 text-sm font-medium text-gray-700">Yönetici şifresi:</label>
+                                <input type="password" name="password" class="w-full rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 block p-2.5" id="password" placeholder="Yönetici şifresini girin" required>
+                                <p class="mt-2 text-sm text-gray-500">Yönetici paneline erişmek için şifrenizi girin.</p>
+                            </div>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Giriş Yap</button>
+                            <a href="/" class="ml-4 text-blue-600 hover:text-blue-800 font-medium">Ana Sayfaya Dön</a>
+                        </form>
+                        {% if error %}
+                        <div class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">{{ error }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% else %}
+                <!-- Yönetici Paneli -->
+                <div class="flex justify-end mb-4">
+                    <a href="/admin/logout" class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 mr-2">Çıkış Yap</a>
+                    <a href="/" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Ana Sayfa</a>
+                </div>
+                
+                <!-- Sekmeler (Tabs) -->
+                <div class="border-b border-gray-200 mb-6">
+                    <div class="overflow-x-auto overflow-y-hidden">
+                        <ul class="flex flex-nowrap whitespace-nowrap -mb-px text-sm font-medium text-center" id="adminTabs" role="tablist">
+                            <li class="mr-2" role="presentation">
+                                <button class="tab-button inline-block p-4 border-b-2 border-blue-600 rounded-t-lg text-blue-600" id="api-keys-tab" data-target="apiKeysContent" type="button" role="tab" aria-selected="true">API Anahtarları</button>
+                            </li>
+                            <li class="mr-2" role="presentation">
+                                <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="ip-usage-tab" data-target="ipUsageContent" type="button" role="tab" aria-selected="false">IP Kullanımı</button>
+                            </li>
+                            <li class="mr-2" role="presentation">
+                                <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="usage-summary-tab" data-target="usageSummaryContent" type="button" role="tab" aria-selected="false">Kullanım Özeti</button>
+                            </li>
+                            <li class="mr-2" role="presentation">
+                                <button class="tab-button inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" id="endpoints-tab" data-target="endpointsContent" type="button" role="tab" aria-selected="false">Endpointler</button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tab İçerikleri -->
+                <div id="adminTabContent">
+                    <!-- API Anahtarları Tab İçeriği -->
+                    <div class="tab-content" id="apiKeysContent" role="tabpanel">
+                        <div class="bg-white rounded-lg shadow-md mb-6 overflow-hidden">
+                            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-xl font-semibold text-dark">API Anahtarları</h3>
+                                <div>
+                                    <button id="createApiKeyBtn" class="px-3 py-1.5 text-sm bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50">Yeni API Anahtarı</button>
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-gray-600 mb-4">Yükleniyor...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- IP Kullanımı Tab İçeriği -->
+                    <div class="tab-content hidden" id="ipUsageContent" role="tabpanel">
+                        <div class="bg-white rounded-lg shadow-md mb-6 overflow-hidden">
+                            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-xl font-semibold text-dark">IP Kullanımı</h3>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-gray-600 mb-4">Yükleniyor...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Kullanım Özeti Tab İçeriği -->
+                    <div class="tab-content hidden" id="usageSummaryContent" role="tabpanel">
+                        <div class="bg-white rounded-lg shadow-md mb-6 overflow-hidden">
+                            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                                <h3 class="text-xl font-semibold text-dark">Kullanım Özeti</h3>
+                            </div>
+                            <div class="p-6">
+                                <p class="text-gray-600 mb-4">Yükleniyor...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Endpointler Tab İçeriği -->
+                    <div class="tab-content hidden" id="endpointsContent" role="tabpanel">
+                        <div class="bg-white rounded-lg shadow-md mb-6 overflow-hidden">
+                            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                                <h3 class="text-xl font-semibold text-dark">Admin Endpointleri</h3>
+                                <p class="text-sm text-gray-600 mt-1">Yönetici API'sini kullanarak sistemi programatik olarak yönetebilirsiniz.</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Endpoint</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metod</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Açıklama</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Örnek Kullanım</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200">
+                                            <!-- API Anahtarları Endpointleri -->
+                                            <tr class="bg-gray-50">
+                                                <td colspan="4" class="px-6 py-2 font-medium text-gray-600">API Anahtarları Endpointleri</td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/list_api_keys</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">GET</td>
+                                                <td class="px-6 py-4">Tüm API anahtarlarını listeler.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/list_api_keys
+Authorization: Bearer [admin_şifresi]
+Accept: application/json</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "api_keys": [
+    {
+      "id": 1,
+      "api_key": "api_key123",
+      "description": "Test anahtarı",
+      "is_unlimited": false,
+      "monthly_token_limit": 100000,
+      "tokens_used": 5000,
+      "created_at": "2023-06-15T10:30:00Z"
+    }
+  ]
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/get_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">GET</td>
+                                                <td class="px-6 py-4">Belirli bir ID'ye sahip API anahtarını getirir.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/get_api_key/1
+Authorization: Bearer [admin_şifresi]
+Accept: application/json</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "api_key": {
+    "id": 1,
+    "api_key": "api_key123",
+    "description": "Test anahtarı",
+    "is_unlimited": false,
+    "monthly_token_limit": 100000,
+    "tokens_used": 5000,
+    "auto_reset": true,
+    "last_reset_date": "2023-07-15T10:30:00Z",
+    "created_at": "2023-06-15T10:30:00Z",
+    "updated_at": "2023-06-15T10:30:00Z"
+  }
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/create_api_key</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">POST</td>
+                                                <td class="px-6 py-4">Yeni API anahtarı oluşturur.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">POST /admin/create_api_key
+Authorization: Bearer [admin_şifresi]
+Accept: application/json
+Content-Type: application/json
+
+{
+  "description": "Yeni anahtar",
+  "monthly_token_limit": 150000,
+  "is_unlimited": false
+}</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "api_key": "sk_12345abcdef",
+  "message": "API anahtarı başarıyla oluşturuldu."
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/update_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">PUT</td>
+                                                <td class="px-6 py-4">Belirtilen API anahtarının özelliklerini günceller.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">PUT /admin/update_api_key/1
+Authorization: Bearer [admin_şifresi]
+Accept: application/json
+Content-Type: application/json
+
+{
+  "description": "Güncellenmiş açıklama",
+  "monthly_token_limit": 200000,
+  "is_unlimited": true,
+  "auto_reset": false
+}</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "message": "API anahtarı başarıyla güncellendi."
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/delete_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">DELETE</td>
+                                                <td class="px-6 py-4">Belirtilen API anahtarını siler.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">DELETE /admin/delete_api_key/1
+Authorization: Bearer [admin_şifresi]
+Accept: application/json</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "message": "API anahtarı başarıyla silindi."
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- IP Kullanımı Endpointleri -->
+                                            <tr class="bg-gray-50">
+                                                <td colspan="4" class="px-6 py-2 font-medium text-gray-600">IP Kullanımı Endpointleri</td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/list_ip_usage</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">GET</td>
+                                                <td class="px-6 py-4">Tüm IP kullanım bilgilerini listeler.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/list_ip_usage
+Authorization: Bearer [admin_şifresi]
+Accept: application/json</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "ip_usage": [
+    {
+      "ip_address": "192.168.1.1",
+      "monthly_token_limit": 50000,
+      "tokens_used": 12500,
+      "request_count": 45,
+      "last_request_time": "2023-06-18T14:25:30Z"
+    }
+  ]
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/reset_ip_limits/{ip_address}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">POST</td>
+                                                <td class="px-6 py-4">Belirtilen IP adresi için kullanım limitlerini sıfırlar.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">POST /admin/reset_ip_limits/192.168.1.1
+Authorization: Bearer [admin_şifresi]
+Accept: application/json</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "message": "IP limitleri başarıyla sıfırlandı."
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            
+                                            <!-- Genel Kullanım Endpointleri -->
+                                            <tr class="bg-gray-50">
+                                                <td colspan="4" class="px-6 py-2 font-medium text-gray-600">Kullanım Özeti Endpointleri</td>
+                                            </tr>
+                                            
+                                            <tr>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/usage_summary</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap">GET</td>
+                                                <td class="px-6 py-4">API kullanım özetini gösterir.</td>
+                                                <td class="px-6 py-4 text-sm">
+                                                    <div class="mb-2">
+                                                        <span class="font-medium">İstek:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/usage_summary
+Authorization: Bearer [admin_şifresi]
+Accept: application/json</pre>
+                                                    </div>
+                                                    <div>
+                                                        <span class="font-medium">Yanıt:</span>
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">{
+  "total_api_keys": 8,
+  "total_ips": 25,
+  "today_requests": 350,
+  "monthly_requests": 7560,
+  "top_api_keys": [...],
+  "top_ips": [...]
+}</pre>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <div class="mt-8">
+                                    <h4 class="text-lg font-medium text-dark mb-4">Programatik Kullanım Bilgileri</h4>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">Admin endpointlerini programatik olarak kullanmak için aşağıdaki adımları izleyin:</p>
+                                        <ol class="list-decimal pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                                            <li>Tüm isteklerde <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">Authorization</code> başlığını ekleyin.</li>
+                                            <li>Başlık değeri olarak <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">Bearer [admin_şifresi]</code> formatını kullanın.</li>
+                                            <li>POST istekleri için <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">Content-Type: application/json</code> başlığını ekleyin.</li>
+                                            <li>Accept başlığını <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">application/json</code> olarak ayarlayın.</li>
+                                            <li>Başarılı yanıtlar <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">200 OK</code> durum kodu ile döner.</li>
+                                            <li>Hata durumunda <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">401</code>, <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">403</code> veya <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">500</code> durum kodları ve hata mesajı dönebilir.</li>
+                                            <li><strong>Not:</strong> Tarayıcı oturumlarında <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">admin/login</code> ile giriş yaptıktan sonra ek yetkilendirmeye gerek yoktur.</li>
+                                        </ol>
+                                    </div>
+                                    
+                                    <div class="mt-6">
+                                        <h5 class="font-medium text-dark mb-2">Örnek Curl Komutu</h5>
+                                        <pre class="code-block p-3 rounded text-xs overflow-x-auto">curl -X GET "https://yourdomain.com/admin/list_api_keys" \
+    -H "Authorization: Bearer admin_password" \
+    -H "Accept: application/json" \
+    -H "Content-Type: application/json"</pre>
+                                    </div>
+                                    
+                                    <div class="mt-6">
+                                        <h5 class="font-medium text-dark mb-2">Örnek Python Kodu</h5>
+                                        <pre class="code-block p-3 rounded text-xs overflow-x-auto">import requests
+
+admin_password = "your_admin_password"
+base_url = "https://yourdomain.com"
+
+# API anahtarlarını listele
+response = requests.get(
+    f"{base_url}/admin/list_api_keys",
+    headers={
+        "Authorization": f"Bearer {admin_password}",
+        "Accept": "application/json"
+    }
+)
+
+if response.status_code == 200:
+    api_keys = response.json()["api_keys"]
+    print(f"Toplam {len(api_keys)} API anahtarı bulundu.")
+elif response.status_code == 401:
+    print("Yetkisiz erişim! Geçerli admin şifresi gerekiyor.")
+else:
+    print(f"Hata: {response.status_code} - {response.text}")</pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- API Anahtarı Oluşturma/Düzenleme Modal -->
+                <div id="apiKeyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white rounded-lg shadow-lg max-w-md w-full m-4">
+                        <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                            <h3 class="text-xl font-semibold text-dark" id="apiKeyModalTitle">Yeni API Anahtarı Oluştur</h3>
+                            <button id="closeModalBtn" class="text-gray-500 hover:text-gray-700">&times;</button>
+                        </div>
+                        <div class="p-6">
+                            <form id="apiKeyForm">
+                                <input type="hidden" id="keyId" value="">
+                                <input type="hidden" id="editMode" value="0">
+                                <div class="mb-4">
+                                    <label for="keyDescription" class="block mb-2 text-sm font-medium text-gray-700">Açıklama:</label>
+                                    <input type="text" class="w-full rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 block p-2.5" id="keyDescription" placeholder="API anahtarının açıklaması (isteğe bağlı)">
+                                </div>
+                                <div class="mb-4">
+                                    <label for="monthlyLimit" class="block mb-2 text-sm font-medium text-gray-700">Aylık Token Limiti:</label>
+                                    <input type="number" class="w-full rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 block p-2.5" id="monthlyLimit" placeholder="Aylık token limiti" value="100000">
+                                </div>
+                                <div class="mb-4">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" id="isUnlimited">
+                                        <label for="isUnlimited" class="ml-2 text-sm font-medium text-gray-700">Sınırsız</label>
+                                    </div>
+                                </div>
+                                <div class="mb-4">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500" id="autoReset" checked>
+                                        <label for="autoReset" class="ml-2 text-sm font-medium text-gray-700">Otomatik Resetleme</label>
+                                    </div>
+                                </div>
+                                <div class="flex justify-end">
+                                    <button type="button" id="cancelModalBtn" class="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2">İptal</button>
+                                    <button type="submit" id="submitApiKeyBtn" class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Oluştur</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </main>
+
+        <footer class="text-center py-6 text-gray-600 text-sm">
+            <p>© 2025 Temiz Dil API. Tüm hakları saklıdır.</p>
+        </footer>
+    </div>
+    </div>
+    
+    <script>
+        // Hide loading overlay when page is fully loaded
+        window.addEventListener('load', function() {
+            document.getElementById('loading-overlay').style.opacity = '0';
+            document.getElementById('page-content').style.display = 'block';
+            
+            setTimeout(function() {
+                document.getElementById('loading-overlay').style.display = 'none';
+            }, 500);
+        });
+    </script>
+    <!-- Admin paneli için JavaScript -->
+    {% if logged_in %}
+    <script src="/static/admin.js"></script>
+    {% endif %}
+    <script src="/static/theme.js"></script>
+</body>
+</html> 
