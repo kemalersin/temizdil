@@ -1116,7 +1116,8 @@ def load_model(model_path):
             vocab_size_model = MODEL.bert.embeddings.word_embeddings.weight.size(0)
             logger.info(f"Model kelime dağarcığı boyutu: {vocab_size_model}")
         
-        MODEL.load_state_dict(torch.load(model_state_path), strict=False)
+        # GPU'da eğitilmiş modeli CPU'da çalıştırmak için map_location parametresi eklendi
+        MODEL.load_state_dict(torch.load(model_state_path, map_location=torch.device('cpu')), strict=False)
         logger.info(f"Model durumu yüklendi")
         
         # Modeli değerlendirme moduna geçir
