@@ -479,7 +479,9 @@ def require_api_key(f):
         
         # Standart API key veya IP bazlı yetkilendirme
         api_key = request.headers.get('X-API-Key')
-        client_ip = request.remote_addr
+        
+        # Gerçek istemci IP'sini al
+        client_ip = get_client_ip()
         
         # API key varsa önceki sistemle işlem yap
         if api_key:
@@ -599,7 +601,10 @@ def predict():
     
     text = data['text']
     tokens_needed = calculate_tokens(text)
-    client_ip = request.remote_addr
+    
+    # Gerçek istemci IP'sini al
+    client_ip = get_client_ip()
+    
     endpoint = '/predict'
     
     # Admin isteği veya sınırsız değilse token kontrolü yap
@@ -682,7 +687,10 @@ def batch_predict():
         return jsonify({"error": "Lütfen 'texts' listesi ekleyin"}), 400
     
     texts = data['texts']
-    client_ip = request.remote_addr
+    
+    # Gerçek istemci IP'sini al
+    client_ip = get_client_ip()
+    
     endpoint = '/batch_predict'
     
     # Toplam token ihtiyacını hesapla
@@ -779,7 +787,9 @@ def usage_info():
         
         # IP bazlı bilgiler (API key kullanılmıyorsa)
         if not g.using_api_key:
-            client_ip = request.remote_addr
+            # Gerçek istemci IP'sini al
+            client_ip = get_client_ip()
+                
             ip_info = get_or_create_ip_info(client_ip)
             if ip_info:
                 info["request_count"] = ip_info["request_count"]
@@ -1134,6 +1144,31 @@ def index():
     """Ana sayfa - API kullanım kılavuzu"""
     model_path = app.config.get('MODEL_PATH', './offensive_model_hierarchical')
     return render_template('index.html', model_path=model_path)
+
+# Proxy arkasındaki gerçek istemci IP'sini almak için helper fonksiyon
+def get_client_ip():
+    """
+    İstemcinin gerçek IP adresini döndürür.
+    
+    Proxy sunucuları, load balancer'lar veya reverse proxy arkasında çalışan
+    uygulamalar için gerçek istemci IP'sini tespit etmeye çalışır.
+    
+    Öncelik sırası:
+    1. X-Forwarded-For header'ı (proxy sunucular tarafından eklenir)
+    2. X-Real-IP header'ı (Nginx gibi reverse proxy'ler tarafından eklenir)
+    3. Flask'ın remote_addr değeri (doğrudan bağlantılarda)
+    
+    X-Forwarded-For birden fazla IP içeriyorsa, en baştaki IP (gerçek istemci IP'si) alınır.
+    """
+    # Standart header'lardan IP'yi al
+    client_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
+    
+    # X-Forwarded-For header'ı virgülle ayrılmış IP listesi içerebilir
+    # İlk IP gerçek istemci IP'sidir, diğerleri proxy sunucularının IP'leridir
+    if client_ip and ',' in client_ip:
+        client_ip = client_ip.split(',')[0].strip()
+        
+    return client_ip
 
 if __name__ == "__main__":
     # Argüman ayrıştırıcı
