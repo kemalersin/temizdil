@@ -37,9 +37,25 @@ ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")  # Güvenlik için .env
 
 # Model sınıfını tanımla
 class HierarchicalOffensiveClassifier(nn.Module):
-    def __init__(self, model_name, num_labels=5):
+    def __init__(self, model_name, num_labels=5, vocab_size=None):
         super(HierarchicalOffensiveClassifier, self).__init__()
-        self.bert = BertModel.from_pretrained(model_name)
+        
+        # vocab_size parametresi mevcutsa ve bu bir string ise (model yolu), tokenizer'ı yükleyip kelime dağarcığı boyutunu alalım
+        if isinstance(model_name, str) and vocab_size is None:
+            try:
+                tokenizer = AutoTokenizer.from_pretrained(model_name)
+                vocab_size = len(tokenizer)
+                logger.info(f"Tokenizer kelime dağarcığı boyutu: {vocab_size}")
+            except Exception as e:
+                logger.warning(f"Tokenizer yüklenemedi, varsayılan BERT kelime dağarcığı boyutu kullanılacak: {e}")
+                vocab_size = None
+        
+        # BERT modelini yükle, vocab_size varsa kullan
+        config_kwargs = {}
+        if vocab_size is not None:
+            config_kwargs['vocab_size'] = vocab_size
+            
+        self.bert = BertModel.from_pretrained(model_name, **config_kwargs)
         self.dropout = nn.Dropout(0.1)
         self.num_labels = num_labels
         
@@ -1082,15 +1098,35 @@ def load_model(model_path):
     """Modeli ve tokenizer'ı yükle"""
     global MODEL, TOKENIZER
     
-    # Tokenizer'ı yükle
-    TOKENIZER = AutoTokenizer.from_pretrained(model_path)
-    
-    # Modeli yükle
-    MODEL = HierarchicalOffensiveClassifier(model_path, num_labels=len(LABELS))
-    MODEL.load_state_dict(torch.load(f"{model_path}/pytorch_model.bin"))
-    MODEL.eval()
-    
-    logger.info(f"Model ve tokenizer '{model_path}' konumundan yüklendi")
+    try:
+        # Tokenizer'ı yükle
+        TOKENIZER = AutoTokenizer.from_pretrained(model_path)
+        logger.info(f"Tokenizer yüklendi. Kelime dağarcığı boyutu: {len(TOKENIZER)}")
+        
+        # Özel model sınıfı örneğini oluştur - vocab_size parametresini geç
+        MODEL = HierarchicalOffensiveClassifier(model_path, num_labels=len(LABELS), vocab_size=len(TOKENIZER))
+        logger.info(f"Model sınıfı başlatıldı")
+        
+        # Modelin durumunu yükle
+        model_state_path = f"{model_path}/pytorch_model.bin"
+        logger.info(f"Model durumu yükleniyor: {model_state_path}")
+        
+        # Modelin kelime dağarcığı boyutunu kontrol et
+        if hasattr(MODEL.bert.embeddings.word_embeddings, 'weight'):
+            vocab_size_model = MODEL.bert.embeddings.word_embeddings.weight.size(0)
+            logger.info(f"Model kelime dağarcığı boyutu: {vocab_size_model}")
+        
+        MODEL.load_state_dict(torch.load(model_state_path), strict=False)
+        logger.info(f"Model durumu yüklendi")
+        
+        # Modeli değerlendirme moduna geçir
+        MODEL.eval()
+        
+        logger.info(f"Model ve tokenizer '{model_path}' konumundan başarıyla yüklendi")
+    except Exception as e:
+        logger.error(f"Model yüklenirken hata oluştu: {e}")
+        logger.error("Detaylı hata bilgisi:", exc_info=True)
+        raise
 
 @app.route('/')
 def index():
