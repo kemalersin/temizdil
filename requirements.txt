@@ -6,4 +6,3 @@ datasets
 flask
 mysql-connector-python
 python-dotenv
-redis
