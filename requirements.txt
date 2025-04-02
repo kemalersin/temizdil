@@ -6,3 +6,4 @@ datasets
 flask
 mysql-connector-python
 python-dotenv
+waitress

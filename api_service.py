@@ -1187,6 +1187,24 @@ if __name__ == "__main__":
     
     # Model yolunu app.config'e ekle
     app.config['MODEL_PATH'] = args.model_path
+   
+    # Çalışma modunu al
+    env = os.getenv('FLASK_ENV', 'production')
+    
+    if env == 'development':
+        # Geliştirme modu
+        logger.info("Uygulama geliştirme modunda başlatılıyor...")
+        app.run(host=args.host, port=args.port, debug=True)
+    else:
+        # Üretim modu - waitress WSGI sunucusu kullanılıyor
+        try:
+            from waitress import serve
+            logger.info(f"Uygulama üretim modunda waitress ile başlatılıyor (port: {args.port})...")
+            serve(app, host=args.host, port=args.port, threads=8)
+        except ImportError:
+            logger.warning("Waitress yüklü değil, pip install waitress ile kurabilirsiniz.")
+            logger.warning("Şimdilik geliştirme sunucusu kullanılıyor, üretim ortamında kullanmayın!")
+            app.run(host=args.host, port=args.port)     
     
     # API'yi başlat
     app.run(host=args.host, port=args.port)

@@ -200,7 +200,7 @@ function loadApiKeys() {
             }
             
             if (!data.api_keys || data.api_keys.length === 0) {
-                contentArea.innerHTML = '<p class="text-gray-600 mb-4">Henüz API anahtarı bulunmuyor.</p>';
+                contentArea.innerHTML = '<p class="text-gray-600 mb-4">Henüz hiç API anahtarı oluşturulmamış.</p>';
                 return;
             }
             
