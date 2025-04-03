@@ -1157,15 +1157,19 @@ def get_client_ip():
     uygulamalar için gerçek istemci IP'sini tespit etmeye çalışır.
     
     Öncelik sırası:
-    1. X-Forwarded-For header'ı (proxy sunucular tarafından eklenir)
-    2. X-Real-IP header'ı (Nginx gibi reverse proxy'ler tarafından eklenir)
-    3. X-Client-IP header'ı (bazı proxy'ler tarafından eklenir)
-    4. Flask'ın remote_addr değeri (doğrudan bağlantılarda)
+    1. CF-Connecting-IP header'ı (Cloudflare)
+    2. True-Client-IP header'ı (Cloudflare alternatif)
+    3. X-Forwarded-For header'ı (proxy sunucular tarafından eklenir)
+    4. X-Real-IP header'ı (Nginx gibi reverse proxy'ler tarafından eklenir)
+    5. X-Client-IP header'ı (bazı proxy'ler tarafından eklenir)
+    6. Flask'ın remote_addr değeri (doğrudan bağlantılarda)
     
     X-Forwarded-For birden fazla IP içeriyorsa, en baştaki IP (gerçek istemci IP'si) alınır.
     """
     # Tüm olası header'ları kontrol et
     headers = [
+        'HTTP_CF_CONNECTING_IP',  # Cloudflare
+        'HTTP_TRUE_CLIENT_IP',    # Cloudflare alternatif
         'HTTP_X_FORWARDED_FOR',
         'HTTP_X_REAL_IP',
         'HTTP_X_CLIENT_IP',
