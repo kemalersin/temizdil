@@ -3,6 +3,7 @@ numpy
 scikit-learn
 transformers
 datasets
+torch
 flask
 mysql-connector-python
 python-dotenv
