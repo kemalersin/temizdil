@@ -1127,7 +1127,9 @@ def load_model(model_path):
             logger.info(f"Model kelime dağarcığı boyutu: {vocab_size_model}")
         
         # GPU'da eğitilmiş modeli CPU'da çalıştırmak için map_location parametresi eklendi
-        MODEL.load_state_dict(torch.load(model_state_path, map_location=torch.device('cpu')), strict=False)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        MODEL.load_state_dict(torch.load(model_state_path, map_location=device), strict=False)
+        model.to(device)
         logger.info(f"Model durumu yüklendi")
         
         # Modeli değerlendirme moduna geçir
