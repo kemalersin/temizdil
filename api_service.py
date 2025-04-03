@@ -1129,7 +1129,8 @@ def load_model(model_path):
         # GPU'da eğitilmiş modeli CPU'da çalıştırmak için map_location parametresi eklendi
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         MODEL.load_state_dict(torch.load(model_state_path, map_location=device), strict=False)
-        model.to(device)
+        MODEL.to(device)
+        
         logger.info(f"Model durumu yüklendi")
         
         # Modeli değerlendirme moduna geçir
@@ -1158,19 +1159,29 @@ def get_client_ip():
     Öncelik sırası:
     1. X-Forwarded-For header'ı (proxy sunucular tarafından eklenir)
     2. X-Real-IP header'ı (Nginx gibi reverse proxy'ler tarafından eklenir)
-    3. Flask'ın remote_addr değeri (doğrudan bağlantılarda)
+    3. X-Client-IP header'ı (bazı proxy'ler tarafından eklenir)
+    4. Flask'ın remote_addr değeri (doğrudan bağlantılarda)
     
     X-Forwarded-For birden fazla IP içeriyorsa, en baştaki IP (gerçek istemci IP'si) alınır.
     """
-    # Standart header'lardan IP'yi al
-    client_ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.environ.get('HTTP_X_REAL_IP', request.remote_addr))
+    # Tüm olası header'ları kontrol et
+    headers = [
+        'HTTP_X_FORWARDED_FOR',
+        'HTTP_X_REAL_IP',
+        'HTTP_X_CLIENT_IP',
+        'REMOTE_ADDR'
+    ]
     
-    # X-Forwarded-For header'ı virgülle ayrılmış IP listesi içerebilir
-    # İlk IP gerçek istemci IP'sidir, diğerleri proxy sunucularının IP'leridir
-    if client_ip and ',' in client_ip:
-        client_ip = client_ip.split(',')[0].strip()
-        
-    return client_ip
+    for header in headers:
+        ip = request.environ.get(header)
+        if ip:
+            # X-Forwarded-For header'ı virgülle ayrılmış IP listesi içerebilir
+            if ',' in ip:
+                ip = ip.split(',')[0].strip()
+            return ip
+    
+    # Hiçbir header bulunamazsa varsayılan olarak remote_addr'i döndür
+    return request.remote_addr
 
 if __name__ == "__main__":
     # Argüman ayrıştırıcı
@@ -1202,7 +1213,7 @@ if __name__ == "__main__":
         try:
             from waitress import serve
             logger.info(f"Uygulama üretim modunda waitress ile başlatılıyor (port: {args.port})...")
-            serve(app, host=args.host, port=args.port, threads=8)
+            serve(app, host=args.host, port=args.port, threads=8, trusted_proxy='*')
         except ImportError:
             logger.warning("Waitress yüklü değil, pip install waitress ile kurabilirsiniz.")
             logger.warning("Şimdilik geliştirme sunucusu kullanılıyor, üretim ortamında kullanmayın!")
