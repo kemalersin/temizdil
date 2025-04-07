@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/styles.css">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -72,7 +73,7 @@
   -H "X-API-Key: sizin_api_keyiniz" \
   -d '{"text": "Bu bir örnek cümledir."}'</code></pre>
                 
-                <div class="mt-6 p-4 bg-blue-50 text-blue-800 rounded-lg">
+                <div class="bg-blue-50 text-blue-600 dark:bg-blue-800 dark:text-blue-400 mt-6 p-4 rounded-lg">
                     <strong class="font-medium">Not:</strong> API Key olmadan kullanımda aylık 10.000 token ve 15 dakikalık sürede 15 istek limiti vardır.
                 </div>
             </div>
@@ -144,22 +145,22 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">/health</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">/health</code></td>
                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                 <td class="px-6 py-4">API durumunu kontrol eder.</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">/predict</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">/predict</code></td>
                                 <td class="px-6 py-4 whitespace-nowrap">POST</td>
-                                <td class="px-6 py-4">Tek bir metin için sınıflandırma yapar. <code class="bg-gray-100 px-1 py-0.5 rounded">{"text": "Metin içeriği"}</code> formatında istek gönderilmelidir.</td>
+                                <td class="px-6 py-4">Tek bir metin için sınıflandırma yapar. <code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{"text": "Metin içeriği"}</code> formatında istek gönderilmelidir.</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">/batch_predict</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">/batch_predict</code></td>
                                 <td class="px-6 py-4 whitespace-nowrap">POST</td>
-                                <td class="px-6 py-4">Birden fazla metin için sınıflandırma yapar. <code class="bg-gray-100 px-1 py-0.5 rounded">{"texts": ["Metin 1", "Metin 2"]}</code> formatında istek gönderilmelidir.</td>
+                                <td class="px-6 py-4">Birden fazla metin için sınıflandırma yapar. <code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">{"texts": ["Metin 1", "Metin 2"]}</code> formatında istek gönderilmelidir.</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">/usage_info</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">/usage_info</code></td>
                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                 <td class="px-6 py-4">API kullanım bilgilerini gösterir (token kullanımı, kalan token sayısı, vb.)</td>
                             </tr>
@@ -184,23 +185,23 @@
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">non</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">non</code></td>
                                 <td class="px-6 py-4">Saldırgan olmayan içerik</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">prof</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">prof</code></td>
                                 <td class="px-6 py-4">Küfür/Hakaret/Profanity</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">grp</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">grp</code></td>
                                 <td class="px-6 py-4">Gruba yönelik saldırgan içerik</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">ind</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">ind</code></td>
                                 <td class="px-6 py-4">Bireye yönelik saldırgan içerik</td>
                             </tr>
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 px-1 py-0.5 rounded">oth</code></td>
+                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-700 px-1 py-0.5 rounded">oth</code></td>
                                 <td class="px-6 py-4">Diğer saldırgan içerik türleri</td>
                             </tr>
                         </tbody>
@@ -214,7 +215,7 @@
                 <h3 class="text-xl font-semibold text-dark">API Key Edinme</h3>
             </div>
             <div class="p-6">
-                <p>Daha yüksek limitler ve daha güvenilir kullanım için API key edinebilirsiniz. API key almak için lütfen iletişime geçin: <a class="font-medium text-blue-600 dark:text-blue-500 hover:underline" href="mailto:info@apimapi.com">info@apimapi.com</a></p>
+                <p>Daha yüksek limitler ve daha güvenilir kullanım için API key edinebilirsiniz. API key almak için lütfen iletişime geçin: <a class="font-medium text-blue-600 hover:underline" href="mailto:info@apimapi.com">info@apimapi.com</a></p>
             </div>
         </div>
 

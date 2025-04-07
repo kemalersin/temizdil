@@ -27,7 +27,7 @@ body {
     color: #334155;
 }
 
-body.dark-mode {
+html.dark body {
     background-color: var(--dark-bg);
     color: var(--dark-text);
 }
@@ -46,7 +46,7 @@ body.dark-mode {
     transition: opacity 0.5s ease-out;
 }
 
-.dark-mode #loading-overlay {
+.dark #loading-overlay {
     background-color: #0f172a;
 }
 
@@ -59,7 +59,7 @@ body.dark-mode {
     animation: spin 1s linear infinite;
 }
 
-.dark-mode .spinner {
+.dark .spinner {
     border: 5px solid #1e293b;
     border-top: 5px solid #3b82f6;
 }
@@ -78,7 +78,7 @@ body.dark-mode {
     padding: 1rem;
 }
 
-.dark-mode .code-block {
+.dark .code-block {
     background-color: #0f172a;
     color: #e2e8f0;
     border: 1px solid var(--dark-border);
@@ -101,71 +101,71 @@ body.dark-mode {
 }
 
 /* Dark Mode Değişkenleri */
-.dark-mode .bg-white {
+.dark .bg-white {
     background-color: var(--dark-card);
 }
 
-.dark-mode .bg-gray-50 {
+.dark .bg-gray-50 {
     background-color: #1a2234;
 }
 
-.dark-mode .border-gray-200 {
+.dark .border-gray-200 {
     border-color: var(--dark-border);
 }
 
-.dark-mode .text-gray-700, 
-.dark-mode .text-gray-600,
-.dark-mode .text-gray-500,
-.dark-mode .text-dark {
+.dark .text-gray-700, 
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-dark {
     color: var(--dark-text);
 }
 
-.dark-mode .text-gray-500 {
+.dark .text-gray-500 {
     color: var(--dark-text-muted);
 }
 
-.dark-mode .shadow-md {
+.dark .shadow-md {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 /* Input ve Textarea Dark Mode */
-.dark-mode input[type="text"],
-.dark-mode input[type="number"],
-.dark-mode input[type="password"],
-.dark-mode textarea {
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="password"],
+.dark textarea {
     background-color: var(--dark-input-bg);
     color: var(--dark-input-text);
     border-color: var(--dark-input-border);
 }
 
-.dark-mode input[type="text"]:focus,
-.dark-mode input[type="number"]:focus,
-.dark-mode input[type="password"]:focus,
-.dark-mode textarea:focus {
+.dark input[type="text"]:focus,
+.dark input[type="number"]:focus,
+.dark input[type="password"]:focus,
+.dark textarea:focus {
     border-color: var(--primary-color);
     outline: none;
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
 }
 
 /* Dark Mode için tablo stillerini güncelle */
-.dark-mode thead.bg-gray-50 {
+.dark thead.bg-gray-50 {
     background-color: #1a2234;
 }
 
-.dark-mode tbody.bg-white {
+.dark tbody.bg-white {
     background-color: var(--dark-card);
 }
 
-.dark-mode tr {
+.dark tr {
     border-color: var(--dark-border);
 }
 
-.dark-mode .divide-gray-200 {
+.dark .divide-gray-200 {
     --tw-divide-opacity: 1;
     border-color: var(--dark-border);
 }
 
-.dark-mode .divide-y {
+.dark .divide-y {
     --tw-divide-opacity: 1;
     border-color: var(--dark-border);
 }
@@ -194,7 +194,7 @@ body.dark-mode {
     transform: scale(1.05);
 }
 
-.dark-mode .theme-toggle {
+.dark .theme-toggle {
     background-color: var(--dark-text);
     color: var(--dark-bg);
 } 

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/styles.css">
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -153,7 +154,7 @@
                                             </tr>
                                             
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/list_api_keys</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/list_api_keys</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                                 <td class="px-6 py-4">Tüm API anahtarlarını listeler.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -182,7 +183,7 @@ Accept: application/json</pre>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/get_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/get_api_key/{key_id}</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                                 <td class="px-6 py-4">Belirli bir ID'ye sahip API anahtarını getirir.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -212,7 +213,7 @@ Accept: application/json</pre>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/create_api_key</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/create_api_key</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">POST</td>
                                                 <td class="px-6 py-4">Yeni API anahtarı oluşturur.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -239,7 +240,7 @@ Content-Type: application/json
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/update_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/update_api_key/{key_id}</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">PUT</td>
                                                 <td class="px-6 py-4">Belirtilen API anahtarının özelliklerini günceller.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -266,7 +267,7 @@ Content-Type: application/json
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/delete_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/delete_api_key/{key_id}</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">DELETE</td>
                                                 <td class="px-6 py-4">Belirtilen API anahtarını siler.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -291,7 +292,7 @@ Accept: application/json</pre>
                                             </tr>
                                             
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/list_ip_usage</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/list_ip_usage</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                                 <td class="px-6 py-4">Tüm IP kullanım bilgilerini listeler.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -318,7 +319,7 @@ Accept: application/json</pre>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/reset_ip_limits/{ip_address}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/reset_ip_limits/{ip_address}</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">POST</td>
                                                 <td class="px-6 py-4">Belirtilen IP adresi için kullanım limitlerini sıfırlar.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -343,7 +344,7 @@ Accept: application/json</pre>
                                             </tr>
                                             
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">/admin/usage_summary</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/usage_summary</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                                 <td class="px-6 py-4">API kullanım özetini gösterir.</td>
                                                 <td class="px-6 py-4 text-sm">
@@ -373,15 +374,15 @@ Accept: application/json</pre>
                                 <div class="mt-8">
                                     <h4 class="text-lg font-medium text-dark mb-4">Programatik Kullanım Bilgileri</h4>
                                     <div class="bg-gray-50 p-4 rounded-lg">
-                                        <p class="text-sm text-gray-700 dark:text-gray-300 mb-3">Admin endpointlerini programatik olarak kullanmak için aşağıdaki adımları izleyin:</p>
-                                        <ol class="list-decimal pl-5 text-sm text-gray-700 dark:text-gray-300 space-y-2">
-                                            <li>Tüm isteklerde <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">Authorization</code> başlığını ekleyin.</li>
-                                            <li>Başlık değeri olarak <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">Bearer [admin_şifresi]</code> formatını kullanın.</li>
-                                            <li>POST istekleri için <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">Content-Type: application/json</code> başlığını ekleyin.</li>
-                                            <li>Accept başlığını <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">application/json</code> olarak ayarlayın.</li>
-                                            <li>Başarılı yanıtlar <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">200 OK</code> durum kodu ile döner.</li>
-                                            <li>Hata durumunda <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">401</code>, <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">403</code> veya <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">500</code> durum kodları ve hata mesajı dönebilir.</li>
-                                            <li><strong>Not:</strong> Tarayıcı oturumlarında <code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">admin/login</code> ile giriş yaptıktan sonra ek yetkilendirmeye gerek yoktur.</li>
+                                        <p class="text-sm text-gray-700 mb-3">Admin endpointlerini programatik olarak kullanmak için aşağıdaki adımları izleyin:</p>
+                                        <ol class="list-decimal pl-5 text-sm text-gray-700 space-y-2">
+                                            <li>Tüm isteklerde <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">Authorization</code> başlığını ekleyin.</li>
+                                            <li>Başlık değeri olarak <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">Bearer [admin_şifresi]</code> formatını kullanın.</li>
+                                            <li>POST istekleri için <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">Content-Type: application/json</code> başlığını ekleyin.</li>
+                                            <li>Accept başlığını <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">application/json</code> olarak ayarlayın.</li>
+                                            <li>Başarılı yanıtlar <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">200 OK</code> durum kodu ile döner.</li>
+                                            <li>Hata durumunda <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">401</code>, <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">403</code> veya <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">500</code> durum kodları ve hata mesajı dönebilir.</li>
+                                            <li><strong>Not:</strong> Tarayıcı oturumlarında <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">admin/login</code> ile giriş yaptıktan sonra ek yetkilendirmeye gerek yoktur.</li>
                                         </ol>
                                     </div>
                                     

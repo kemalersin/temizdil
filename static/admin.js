@@ -1,30 +1,30 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Tab değiştirme
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
-    
+
     tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             // Aktif tab butonunu güncelle
             tabButtons.forEach(btn => {
                 btn.classList.remove('border-blue-600', 'text-blue-600');
                 btn.classList.add('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
                 btn.setAttribute('aria-selected', 'false');
             });
-            
+
             this.classList.remove('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
             this.classList.add('border-blue-600', 'text-blue-600');
             this.setAttribute('aria-selected', 'true');
-            
+
             // Tab içeriklerini güncelle
             const target = this.dataset.target;
-            
+
             tabContents.forEach(content => {
                 content.classList.add('hidden');
             });
-            
+
             document.getElementById(target).classList.remove('hidden');
-            
+
             // İlgili veriyi yükle
             if (target === 'apiKeysContent' && !this.dataset.loaded) {
                 loadApiKeys();
@@ -57,17 +57,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const submitApiKeyBtn = document.getElementById('submitApiKeyBtn');
 
     // Yeni API anahtarı butonuna tıklandığında modal'ı aç (oluşturma modu)
-    createApiKeyBtn.addEventListener('click', function() {
+    createApiKeyBtn.addEventListener('click', function () {
         // Formu sıfırla
         apiKeyForm.reset();
         document.getElementById('keyId').value = '';
         document.getElementById('editMode').value = '0';
         document.getElementById('autoReset').checked = true;
-        
+
         // Modal başlığını ve buton yazısını ayarla
         apiKeyModalTitle.textContent = 'Yeni API Anahtarı Oluştur';
         submitApiKeyBtn.textContent = 'Oluştur';
-        
+
         // Modal'ı aç
         apiKeyModal.classList.remove('hidden');
         apiKeyModal.classList.add('flex');
@@ -78,10 +78,10 @@ document.addEventListener('DOMContentLoaded', function() {
     cancelModalBtn.addEventListener('click', closeModal);
 
     // Form gönderimi
-    apiKeyForm.addEventListener('submit', function(e) {
+    apiKeyForm.addEventListener('submit', function (e) {
         e.preventDefault();
         const editMode = document.getElementById('editMode').value === '1';
-        
+
         if (editMode) {
             updateApiKey();
         } else {
@@ -92,43 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Admin giriş işlemi
     const loginForm = document.getElementById('admin-login-form');
     if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
             // Form POST işlemi tarayıcı tarafından yönetilecek
             this.submit();
         });
-    }
-
-    // Dark mode için kod bloklarındaki arka plan renklerini düzenle
-    const codeBlocks = document.querySelectorAll('code');
-    if (codeBlocks.length > 0) {
-        const darkModeObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                    if (document.body.classList.contains('dark-mode')) {
-                        codeBlocks.forEach(block => {
-                            block.classList.remove('bg-gray-100');
-                            block.classList.add('bg-gray-800', 'text-gray-200');
-                        });
-                    } else {
-                        codeBlocks.forEach(block => {
-                            block.classList.remove('bg-gray-800', 'text-gray-200');
-                            block.classList.add('bg-gray-100');
-                        });
-                    }
-                }
-            });
-        });
-        
-        darkModeObserver.observe(document.body, { attributes: true });
-        
-        // Sayfa ilk yüklendiğinde dark mode kontrolü
-        if (document.body.classList.contains('dark-mode')) {
-            codeBlocks.forEach(block => {
-                block.classList.remove('bg-gray-100');
-                block.classList.add('bg-gray-800', 'text-gray-200');
-            });
-        }
     }
 });
 
@@ -144,12 +112,12 @@ function closeModal() {
 // Tarih formatlama yardımcı fonksiyonu
 function formatDate(dateStr) {
     if (!dateStr) return '-';
-    
+
     try {
         const date = new Date(dateStr);
-        
+
         if (isNaN(date.getTime())) return '-';
-        
+
         return date.toLocaleString('tr-TR', {
             timeZone: 'UTC' // Zaman dilimini UTC olarak sabitler
         });
@@ -167,15 +135,15 @@ function fetchAPI(url, options = {}) {
             'Accept': 'application/json'
         }
     };
-    
+
     // Seçenekleri birleştir
-    const fetchOptions = {...defaultOptions, ...options};
-    
+    const fetchOptions = { ...defaultOptions, ...options };
+
     // Content-Type header'ı ekle (eğer body varsa ve Content-Type yoksa)
     if (options.body && !options.headers?.['Content-Type']) {
         fetchOptions.headers['Content-Type'] = 'application/json';
     }
-    
+
     // İsteği yap
     return fetch(url, fetchOptions)
         .then(response => {
@@ -191,19 +159,19 @@ function fetchAPI(url, options = {}) {
 function loadApiKeys() {
     const contentArea = document.querySelector('#apiKeysContent .p-6');
     contentArea.innerHTML = '<p class="text-gray-600 mb-4">Yükleniyor...</p>';
-    
+
     fetchAPI('/admin/list_api_keys')
         .then(data => {
             if (data.error) {
                 contentArea.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg">${data.error}</div>`;
                 return;
             }
-            
+
             if (!data.api_keys || data.api_keys.length === 0) {
                 contentArea.innerHTML = '<p class="text-gray-600 mb-4">Henüz hiç API anahtarı oluşturulmamış.</p>';
                 return;
             }
-            
+
             let html = `
                 <div class="overflow-x-auto">
                     <table class="min-w-full divide-y divide-gray-200">
@@ -223,14 +191,14 @@ function loadApiKeys() {
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
             `;
-            
+
             data.api_keys.forEach(key => {
                 const lastResetDate = formatDate(key.last_reset_date);
-                
+
                 html += `
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">${key.id}</td>
-                        <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-gray-800 dark:text-gray-300">${key.api_key}</code></td>
+                        <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">${key.api_key}</code></td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${key.description || '-'}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${key.is_unlimited ? '<span class="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">Evet</span>' : '<span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">Hayır</span>'}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${key.monthly_token_limit.toLocaleString()}</td>
@@ -239,20 +207,20 @@ function loadApiKeys() {
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${lastResetDate}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(key.created_at)}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button onclick="getApiKeyDetails(${key.id})" class="text-gray-600 hover:text-gray-900 mr-2">Detay</button>
+                            <button onclick="getApiKeyDetails(${key.id})" class="text-gray-600 hover:text-gray-900 dark:hover:text-gray-600 mr-2">Detay</button>
                             <button onclick="editApiKey(${key.id})" class="text-blue-600 hover:text-blue-900 mr-2">Düzenle</button>
                             <button onclick="deleteApiKey(${key.id})" class="text-red-600 hover:text-red-900 mr-2">Sil</button>
                         </td>
                     </tr>
                 `;
             });
-            
+
             html += `
                         </tbody>
                     </table>
                 </div>
             `;
-            
+
             contentArea.innerHTML = html;
         })
         .catch(error => {
@@ -267,10 +235,10 @@ function loadApiKeys() {
 function loadIpUsage() {
     const ipUsageContent = document.getElementById('ipUsageContent');
     if (!ipUsageContent) return;
-    
+
     const contentArea = ipUsageContent.querySelector('.p-6');
     if (!contentArea) return;
-    
+
     // Spinner göster
     contentArea.innerHTML = `
         <div class="flex justify-center p-4">
@@ -280,19 +248,19 @@ function loadIpUsage() {
             </svg>
         </div>
     `;
-    
+
     fetchAPI('/admin/list_ip_usage')
         .then(data => {
             if (data.error) {
                 contentArea.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg">${data.error}</div>`;
                 return;
             }
-            
+
             if (!data.ip_usage || data.ip_usage.length === 0) {
                 contentArea.innerHTML = '<div class="p-4 bg-blue-100 text-blue-700 rounded-lg">Henüz IP kullanım bilgisi bulunmuyor.</div>';
                 return;
             }
-            
+
             // IP kullanım tablosu oluştur
             let html = `
                 <div class="overflow-x-auto">
@@ -310,31 +278,31 @@ function loadIpUsage() {
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
             `;
-            
+
             data.ip_usage.forEach(ip => {
                 let lastResetDate = formatDate(ip.last_reset_date);
-                
+
                 html += `
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${ip.ip_address}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-300">${ip.ip_address}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ip.monthly_token_limit.toLocaleString()}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ip.tokens_used.toLocaleString()}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${ip.request_count.toLocaleString()}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(ip.last_request_time)}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${lastResetDate}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <button onclick="resetIpLimits('${ip.ip_address}')" class="text-yellow-600 hover:text-yellow-900 mr-2">Sıfırla</button>
+                            <button onclick="resetIpLimits('${ip.ip_address}')" class="text-yellow-600 hover:text-yellow-800 mr-2">Sıfırla</button>
                         </td>
                     </tr>
                 `;
             });
-            
+
             html += `
                         </tbody>
                     </table>
                 </div>
             `;
-            
+
             contentArea.innerHTML = html;
         })
         .catch(error => {
@@ -349,10 +317,10 @@ function loadIpUsage() {
 function loadUsageSummary() {
     const usageSummaryContent = document.getElementById('usageSummaryContent');
     if (!usageSummaryContent) return;
-    
+
     const contentArea = usageSummaryContent.querySelector('.p-6');
     if (!contentArea) return;
-    
+
     // Spinner göster
     contentArea.innerHTML = `
         <div class="flex justify-center p-4">
@@ -362,14 +330,14 @@ function loadUsageSummary() {
             </svg>
         </div>
     `;
-    
+
     fetchAPI('/admin/usage_summary')
         .then(data => {
             if (data.error) {
                 contentArea.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg">${data.error}</div>`;
                 return;
             }
-            
+
             // Genel istatistikler kartı
             let html = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -381,25 +349,25 @@ function loadUsageSummary() {
                             <ul class="divide-y divide-gray-200">
                                 <li class="py-3 flex justify-between">
                                     <span class="text-gray-600">Toplam API Anahtarı</span>
-                                    <span class="font-medium text-gray-900">${data.total_api_keys}</span>
+                                    <span class="font-medium text-gray-900 dark:text-gray-300">${data.total_api_keys}</span>
                                 </li>
                                 <li class="py-3 flex justify-between">
                                     <span class="text-gray-600">Toplam IP Adresi</span>
-                                    <span class="font-medium text-gray-900">${data.total_ips}</span>
+                                    <span class="font-medium text-gray-900 dark:text-gray-300">${data.total_ips}</span>
                                 </li>
                                 <li class="py-3 flex justify-between">
                                     <span class="text-gray-600">Bugünkü İstek Sayısı</span>
-                                    <span class="font-medium text-green-600">${data.today_requests}</span>
+                                    <span class="font-medium text-green-600 dark:text-green-400">${data.today_requests}</span>
                                 </li>
                                 <li class="py-3 flex justify-between">
                                     <span class="text-gray-600">Son 30 Gündeki İstek Sayısı</span>
-                                    <span class="font-medium text-blue-600">${data.monthly_requests}</span>
+                                    <span class="font-medium text-blue-600 dark:text-blue-400">${data.monthly_requests}</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
             `;
-            
+
             // En çok kullanılan API anahtarları
             if (data.top_api_keys && data.top_api_keys.length > 0) {
                 html += `
@@ -410,7 +378,7 @@ function loadUsageSummary() {
                         <div class="p-6">
                             <ul class="divide-y divide-gray-200">
                 `;
-                
+
                 data.top_api_keys.forEach(key => {
                     html += `
                         <li class="py-3 flex justify-between">
@@ -419,14 +387,14 @@ function loadUsageSummary() {
                         </li>
                     `;
                 });
-                
+
                 html += `
                             </ul>
                         </div>
                     </div>
                 `;
             }
-            
+
             // En çok kullanılan IP adresleri
             if (data.top_ips && data.top_ips.length > 0) {
                 html += `
@@ -437,7 +405,7 @@ function loadUsageSummary() {
                         <div class="p-6">
                             <ul class="divide-y divide-gray-200">
                 `;
-                
+
                 data.top_ips.forEach(ip => {
                     html += `
                         <li class="py-3 flex justify-between">
@@ -446,16 +414,16 @@ function loadUsageSummary() {
                         </li>
                     `;
                 });
-                
+
                 html += `
                             </ul>
                         </div>
                     </div>
                 `;
             }
-            
+
             html += `</div>`;
-            
+
             contentArea.innerHTML = html;
         })
         .catch(error => {
@@ -471,7 +439,7 @@ function deleteApiKey(keyId) {
     if (!confirm(`${keyId} ID'li API anahtarını silmek istediğinizden emin misiniz?`)) {
         return;
     }
-    
+
     fetchAPI(`/admin/delete_api_key/${keyId}`, {
         method: 'DELETE'
     })
@@ -496,7 +464,7 @@ function resetIpLimits(ipAddress) {
     if (!confirm(`${ipAddress} IP adresinin kullanım limitlerini sıfırlamak istediğinizden emin misiniz?`)) {
         return;
     }
-    
+
     fetchAPI(`/admin/reset_ip_limits/${ipAddress}`, {
         method: 'POST'
     })
@@ -522,7 +490,7 @@ function createApiKey() {
     const monthlyLimit = parseInt(document.getElementById('monthlyLimit').value) || 100000;
     const isUnlimited = document.getElementById('isUnlimited').checked;
     const autoReset = document.getElementById('autoReset').checked;
-    
+
     fetchAPI('/admin/create_api_key', {
         method: 'POST',
         body: JSON.stringify({
@@ -537,10 +505,10 @@ function createApiKey() {
                 alert(`Hata: ${data.error}`);
             } else {
                 alert(`API anahtarı başarıyla oluşturuldu: ${data.api_key}`);
-                
+
                 // Formu temizle ve modal'ı kapat
                 closeModal();
-                
+
                 // Tabloyu yenile
                 loadApiKeys();
             }
@@ -562,15 +530,15 @@ function editApiKey(keyId) {
                 alert(`Hata: ${data.error}`);
                 return;
             }
-            
+
             // API anahtarı bilgilerini al
             const apiKey = data.api_key;
-            
+
             // Düzenleme modunda modal'ı aç
             const apiKeyModal = document.getElementById('apiKeyModal');
             const apiKeyModalTitle = document.getElementById('apiKeyModalTitle');
             const submitApiKeyBtn = document.getElementById('submitApiKeyBtn');
-            
+
             // Form alanlarını doldur
             document.getElementById('keyId').value = apiKey.id;
             document.getElementById('editMode').value = '1';
@@ -578,11 +546,11 @@ function editApiKey(keyId) {
             document.getElementById('monthlyLimit').value = apiKey.monthly_token_limit;
             document.getElementById('isUnlimited').checked = apiKey.is_unlimited;
             document.getElementById('autoReset').checked = apiKey.auto_reset;
-            
+
             // Modal başlığını ve buton yazısını ayarla
             apiKeyModalTitle.textContent = 'API Anahtarı Düzenle';
             submitApiKeyBtn.textContent = 'Güncelle';
-            
+
             // Modal'ı aç
             apiKeyModal.classList.remove('hidden');
             apiKeyModal.classList.add('flex');
@@ -602,27 +570,27 @@ function updateApiKey() {
     const monthlyLimit = parseInt(document.getElementById('monthlyLimit').value) || 100000;
     const isUnlimited = document.getElementById('isUnlimited').checked;
     const autoReset = document.getElementById('autoReset').checked;
-    
+
     const requestData = {
         description,
         monthly_token_limit: monthlyLimit,
         is_unlimited: isUnlimited,
         auto_reset: autoReset
-    };    
-   
+    };
+
     fetchAPI(`/admin/update_api_key/${keyId}`, {
         method: 'PUT',
         body: JSON.stringify(requestData)
     })
-        .then(data => {       
+        .then(data => {
             if (data.error) {
                 alert(`Hata: ${data.error}`);
             } else {
                 alert(data.message || 'API anahtarı başarıyla güncellendi.');
-                
+
                 // Modal'ı kapat
                 closeModal();
-                
+
                 // Tabloyu yenile
                 loadApiKeys();
             }
@@ -643,9 +611,9 @@ function getApiKeyDetails(keyId) {
                 alert(`Hata: ${data.error}`);
                 return;
             }
-            
+
             const apiKey = data.api_key;
-            
+
             // Modal içeriğini oluştur
             let modalHtml = `
                 <div id="apiKeyDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -658,7 +626,7 @@ function getApiKeyDetails(keyId) {
                             <div class="mb-4">
                                 <h4 class="text-md font-medium text-gray-700 mb-2">API Anahtarı:</h4>
                                 <div class="flex items-center">
-                                    <code class="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-gray-800 dark:text-gray-300 flex-grow">${apiKey.api_key}</code>
+                                    <code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-2 py-1 rounded flex-grow">${apiKey.api_key}</code>
                                     <button class="ml-2 text-blue-600 hover:text-blue-800" onclick="copyToClipboard('${apiKey.api_key}')">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
@@ -722,10 +690,10 @@ function getApiKeyDetails(keyId) {
                     </div>
                 </div>
             `;
-            
+
             // Modal'ı sayfaya ekle
             document.body.insertAdjacentHTML('beforeend', modalHtml);
-            
+
             // Kapanış butonları için olay dinleyicileri
             document.getElementById('closeDetailsModalBtn').addEventListener('click', closeDetailsModal);
             document.getElementById('closeDetailsBtn').addEventListener('click', closeDetailsModal);
