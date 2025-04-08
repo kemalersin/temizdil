@@ -123,7 +123,7 @@ function setupToastAndDialog() {
             <div class="p-6">
                 <p id="dialog-message" class="text-gray-700 mb-6">İşlemi onaylıyor musunuz?</p>
                 <div class="flex justify-end gap-2">
-                    <button id="dialog-cancel" class="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">İptal</button>
+                    <button id="dialog-cancel" class="px-3 py-1.5 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 rounded-lg transition">İptal</button>
                     <button id="dialog-confirm" class="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">Onayla</button>
                 </div>
             </div>
