@@ -1,10 +1,8 @@
 import torch
 from torch import nn
 from transformers import AutoTokenizer, BertModel
-import numpy as np
 from flask import Flask, request, jsonify, g, render_template, session, redirect, url_for
 import argparse
-import mysql.connector
 from mysql.connector import pooling
 from datetime import datetime
 import ipaddress
@@ -21,6 +19,35 @@ load_dotenv()
 # Flask uygulaması
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
+
+# Statik dosya sunumu güvenlik kontrolü
+@app.route('/static/js/admin.js')
+def admin_js():
+    # Eğer admin girişi yapılmamışsa erişimi reddet
+    if not session.get('admin_logged_in'):
+        return jsonify({'error': 'Yetkisiz erişim'}), 403
+    
+    # Admin girişi yapılmışsa dosyayı sun
+    return app.send_static_file('js/admin.js')
+
+# Admin statik dosyalarını korumak için genel bir middleware
+@app.before_request
+def protect_admin_assets():
+    # İstek yolu statik dosyalara mı?
+    if request.path.startswith('/static/'):
+        # Admin ile ilgili dosyaları kontrol et
+        admin_patterns = [
+            '/static/js/admin',  # admin.js veya admin ile başlayan js dosyaları
+            '/static/css/admin', # admin.css veya admin ile başlayan css dosyaları
+            '/static/img/admin', # admin ile ilgili resimler
+            '/static/admin'      # admin klasöründeki tüm dosyalar
+        ]
+        
+        # İstek yolu admin desenleriyle eşleşiyor mu?
+        if any(request.path.startswith(pattern) for pattern in admin_patterns):
+            # Admin girişi yapılmamışsa erişimi reddet
+            if not session.get('admin_logged_in'):
+                return jsonify({'error': 'Yetkisiz erişim'}), 403
 
 # Loglama
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -830,7 +857,7 @@ def admin_logout():
     session.pop('admin_logged_in', None)
     return redirect(url_for('admin_panel'))
 
-@app.route('/admin/list_api_keys')
+@app.route('/admin/keys')
 @admin_required
 def list_api_keys():
     """API anahtarlarını listele"""
@@ -848,7 +875,7 @@ def list_api_keys():
         cursor.close()
         conn.close()
 
-@app.route('/admin/get_api_key/<int:key_id>', methods=['GET'])
+@app.route('/admin/keys/<int:key_id>', methods=['GET'])
 @admin_required
 def get_api_key(key_id):
     """Belirli bir ID'ye sahip API anahtarı bilgilerini getir"""
@@ -870,7 +897,7 @@ def get_api_key(key_id):
         cursor.close()
         conn.close()
 
-@app.route('/admin/delete_api_key/<int:key_id>', methods=['DELETE'])
+@app.route('/admin/keys/<int:key_id>', methods=['DELETE'])
 @admin_required
 def delete_api_key(key_id):
     """API anahtarını sil"""
@@ -892,7 +919,7 @@ def delete_api_key(key_id):
         cursor.close()
         conn.close()
 
-@app.route('/admin/create_api_key', methods=['POST'])
+@app.route('/admin/keys', methods=['POST'])
 @admin_required
 def create_api_key():
     """Yeni API anahtarı oluştur"""
@@ -944,7 +971,7 @@ def list_ip_usage():
         cursor.close()
         conn.close()
 
-@app.route('/admin/update_api_key/<int:key_id>', methods=['PUT'])
+@app.route('/admin/keys/<int:key_id>', methods=['PUT'])
 @admin_required
 def update_api_key(key_id):
     """API anahtarı özelliklerini güncelle"""
@@ -1194,6 +1221,7 @@ if __name__ == "__main__":
                         help="Eğitilmiş model klasörü")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="API host adresi")
     parser.add_argument("--port", type=int, default=5000, help="API port numarası")
+    parser.add_argument("--watch", action="store_true", help="Dosya değişikliklerini izle ve otomatik yeniden başlat")
     args = parser.parse_args()
     
     # Veritabanını başlat
@@ -1221,7 +1249,7 @@ if __name__ == "__main__":
         except ImportError:
             logger.warning("Waitress yüklü değil, pip install waitress ile kurabilirsiniz.")
             logger.warning("Şimdilik geliştirme sunucusu kullanılıyor, üretim ortamında kullanmayın!")
-            app.run(host=args.host, port=args.port)     
+            app.run(host=args.host, port=args.port)   
     
     # API'yi başlat
     app.run(host=args.host, port=args.port)

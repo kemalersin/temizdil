@@ -198,27 +198,27 @@ def admin_login():
 def admin_logout():
     # Admin çıkışı yapar
     
-@app.route('/admin/list_api_keys')
+@app.route('/admin/keys')
 @admin_required
 def list_api_keys():
     # API anahtarlarını listeler
     
-@app.route('/admin/get_api_key/<int:key_id>', methods=['GET'])
+@app.route('/admin/keys/<int:key_id>', methods=['GET'])
 @admin_required
 def get_api_key(key_id):
     # Belirli bir API anahtarı bilgisini getirir
     
-@app.route('/admin/create_api_key', methods=['POST'])
+@app.route('/admin/keys', methods=['POST'])
 @admin_required
 def create_api_key():
     # Yeni API anahtarı oluşturur
     
-@app.route('/admin/update_api_key/<int:key_id>', methods=['PUT'])
+@app.route('/admin/keys/<int:key_id>', methods=['PUT'])
 @admin_required
 def update_api_key(key_id):
     # API anahtarını günceller
     
-@app.route('/admin/delete_api_key/<int:key_id>', methods=['DELETE'])
+@app.route('/admin/keys/<int:key_id>', methods=['DELETE'])
 @admin_required
 def delete_api_key(key_id):
     # API anahtarını siler

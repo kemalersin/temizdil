@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Toast ve dialog için gerekli elementleri ekle
+    setupToastAndDialog();
+
     // Tab değiştirme
     const tabButtons = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -100,6 +103,161 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
+// Toast ve dialog için gerekli UI elementlerini oluştur
+function setupToastAndDialog() {
+    // Toast için gereken elementleri oluştur ve body'e ekle
+    const toastContainer = document.createElement('div');
+    toastContainer.id = 'toast-container';
+    toastContainer.className = 'fixed top-4 right-4 z-50 flex flex-col gap-2';
+    document.body.appendChild(toastContainer);
+
+    // Dialog için gereken elementleri oluştur ve body'e ekle
+    const dialogContainer = document.createElement('div');
+    dialogContainer.id = 'dialog-container';
+    dialogContainer.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden';
+    dialogContainer.innerHTML = `
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full m-4">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                <h3 id="dialog-title" class="text-xl font-semibold text-dark">Onay</h3>
+            </div>
+            <div class="p-6">
+                <p id="dialog-message" class="text-gray-700 mb-6">İşlemi onaylıyor musunuz?</p>
+                <div class="flex justify-end gap-2">
+                    <button id="dialog-cancel" class="px-3 py-1.5 text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition">İptal</button>
+                    <button id="dialog-confirm" class="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">Onayla</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(dialogContainer);
+
+    // Dialog butonlarına event listener'ları ekle
+    document.getElementById('dialog-cancel').addEventListener('click', closeDialog);
+    
+    // Event listener'ları ekle (confirm butonu dinamik olarak eklenecek)
+}
+
+// Toast göster
+function showToast(message, type = 'success') {
+    const toastContainer = document.getElementById('toast-container');
+    
+    // Toast elementini oluştur
+    const toast = document.createElement('div');
+    toast.className = `flex items-center p-4 mb-2 rounded-lg shadow transition-opacity duration-300 ${getToastClasses(type)}`;
+    
+    // Icon ve mesaj içeriğini oluştur
+    toast.innerHTML = `
+        ${getToastIcon(type)}
+        <div class="ml-3 text-sm font-normal">${message}</div>
+        <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 hover:bg-gray-100 inline-flex h-8 w-8 items-center justify-center">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+        </button>
+    `;
+    
+    // Toast'ı container'a ekle
+    toastContainer.appendChild(toast);
+    
+    // Kapatma butonuna tıklama olayını ekle
+    const closeButton = toast.querySelector('button');
+    closeButton.addEventListener('click', () => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    });
+    
+    // 5 saniye sonra otomatik kapat
+    setTimeout(() => {
+        toast.classList.add('opacity-0');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 5000);
+}
+
+// Toast tipi için CSS sınıflarını döndür
+function getToastClasses(type) {
+    switch (type) {
+        case 'success':
+            return 'text-green-800 bg-green-50 border border-green-200';
+        case 'error':
+            return 'text-red-800 bg-red-50 border border-red-200';
+        case 'warning':
+            return 'text-yellow-800 bg-yellow-50 border border-yellow-200';
+        case 'info':
+            return 'text-blue-800 bg-blue-50 border border-blue-200';
+        default:
+            return 'text-gray-800 bg-gray-50 border border-gray-200';
+    }
+}
+
+// Toast tipi için icon'u döndür
+function getToastIcon(type) {
+    switch (type) {
+        case 'success':
+            return `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+                </svg>
+            </div>`;
+        case 'error':
+            return `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.5 11.793-2.293 2.293a1 1 0 0 1-1.414 0L7.5 12.293a1 1 0 1 1 1.414-1.414L10 11.963l1.086-1.086a1 1 0 0 1 1.414 1.414ZM10 6.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2Z"/>
+                </svg>
+            </div>`;
+        case 'warning':
+            return `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-yellow-500 bg-yellow-100 rounded-lg">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z"/>
+                </svg>
+            </div>`;
+        case 'info':
+            return `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-blue-500 bg-blue-100 rounded-lg">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z"/>
+                </svg>
+            </div>`;
+        default:
+            return `<div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-gray-500 bg-gray-100 rounded-lg">
+                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM10 15a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-4a1 1 0 0 1-2 0V6a1 1 0 0 1 2 0v5Z"/>
+                </svg>
+            </div>`;
+    }
+}
+
+// Dialog göster
+function showDialog(title, message, onConfirm) {
+    const dialogContainer = document.getElementById('dialog-container');
+    const dialogTitle = document.getElementById('dialog-title');
+    const dialogMessage = document.getElementById('dialog-message');
+    const confirmButton = document.getElementById('dialog-confirm');
+    
+    // Dialog içeriğini ayarla
+    dialogTitle.textContent = title;
+    dialogMessage.textContent = message;
+    
+    // Onay butonuna click listener ekle
+    confirmButton.onclick = () => {
+        closeDialog();
+        if (typeof onConfirm === 'function') {
+            onConfirm();
+        }
+    };
+    
+    // Dialog'ı göster
+    dialogContainer.classList.remove('hidden');
+}
+
+// Dialog'ı kapat
+function closeDialog() {
+    const dialogContainer = document.getElementById('dialog-container');
+    dialogContainer.classList.add('hidden');
+}
+
 // Modal'ı kapat
 function closeModal() {
     const modal = document.getElementById('apiKeyModal');
@@ -160,7 +318,7 @@ function loadApiKeys() {
     const contentArea = document.querySelector('#apiKeysContent .p-6');
     contentArea.innerHTML = '<p class="text-gray-600 mb-4">Yükleniyor...</p>';
 
-    fetchAPI('/admin/list_api_keys')
+    fetchAPI('/admin/keys')
         .then(data => {
             if (data.error) {
                 contentArea.innerHTML = `<div class="p-4 bg-red-100 text-red-700 rounded-lg">${data.error}</div>`;
@@ -436,52 +594,56 @@ function loadUsageSummary() {
 
 // API anahtarı sil
 function deleteApiKey(keyId) {
-    if (!confirm(`${keyId} ID'li API anahtarını silmek istediğinizden emin misiniz?`)) {
-        return;
-    }
-
-    fetchAPI(`/admin/delete_api_key/${keyId}`, {
-        method: 'DELETE'
-    })
-        .then(data => {
-            if (data.error) {
-                alert(`Hata: ${data.error}`);
-            } else {
-                alert(data.message || 'API anahtarı başarıyla silindi.');
-                loadApiKeys();
-            }
-        })
-        .catch(error => {
-            if (error.message !== 'Yetkisiz erişim') {
-                console.error('API anahtarı silinirken hata:', error);
-                alert('API anahtarı silinirken bir hata oluştu.');
-            }
-        });
+    showDialog(
+        'API Anahtarını Sil', 
+        `${keyId} ID'li API anahtarını silmek istediğinizden emin misiniz?`,
+        () => {
+            fetchAPI(`/admin/keys/${keyId}`, {
+                method: 'DELETE'
+            })
+                .then(data => {
+                    if (data.error) {
+                        showToast(`Hata: ${data.error}`, 'error');
+                    } else {
+                        showToast(data.message || 'API anahtarı başarıyla silindi.', 'success');
+                        loadApiKeys();
+                    }
+                })
+                .catch(error => {
+                    if (error.message !== 'Yetkisiz erişim') {
+                        console.error('API anahtarı silinirken hata:', error);
+                        showToast('API anahtarı silinirken bir hata oluştu.', 'error');
+                    }
+                });
+        }
+    );
 }
 
 // IP limitlerini sıfırla
 function resetIpLimits(ipAddress) {
-    if (!confirm(`${ipAddress} IP adresinin kullanım limitlerini sıfırlamak istediğinizden emin misiniz?`)) {
-        return;
-    }
-
-    fetchAPI(`/admin/reset_ip_limits/${ipAddress}`, {
-        method: 'POST'
-    })
-        .then(data => {
-            if (data.error) {
-                alert(`Hata: ${data.error}`);
-            } else {
-                alert(data.message || 'IP limitleri başarıyla sıfırlandı.');
-                loadIpUsage();
-            }
-        })
-        .catch(error => {
-            if (error.message !== 'Yetkisiz erişim') {
-                console.error('IP limitleri sıfırlanırken hata:', error);
-                alert('IP limitleri sıfırlanırken bir hata oluştu.');
-            }
-        });
+    showDialog(
+        'IP Limitlerini Sıfırla', 
+        `${ipAddress} IP adresinin kullanım limitlerini sıfırlamak istediğinizden emin misiniz?`,
+        () => {
+            fetchAPI(`/admin/reset_ip_limits/${ipAddress}`, {
+                method: 'POST'
+            })
+                .then(data => {
+                    if (data.error) {
+                        showToast(`Hata: ${data.error}`, 'error');
+                    } else {
+                        showToast(data.message || 'IP limitleri başarıyla sıfırlandı.', 'success');
+                        loadIpUsage();
+                    }
+                })
+                .catch(error => {
+                    if (error.message !== 'Yetkisiz erişim') {
+                        console.error('IP limitleri sıfırlanırken hata:', error);
+                        showToast('IP limitleri sıfırlanırken bir hata oluştu.', 'error');
+                    }
+                });
+        }
+    );
 }
 
 // Yeni API anahtarı oluştur
@@ -491,7 +653,7 @@ function createApiKey() {
     const isUnlimited = document.getElementById('isUnlimited').checked;
     const autoReset = document.getElementById('autoReset').checked;
 
-    fetchAPI('/admin/create_api_key', {
+    fetchAPI('/admin/keys', {
         method: 'POST',
         body: JSON.stringify({
             description,
@@ -502,9 +664,9 @@ function createApiKey() {
     })
         .then(data => {
             if (data.error) {
-                alert(`Hata: ${data.error}`);
+                showToast(`Hata: ${data.error}`, 'error');
             } else {
-                alert(`API anahtarı başarıyla oluşturuldu: ${data.api_key}`);
+                showToast(`API anahtarı başarıyla oluşturuldu.`, 'success');
 
                 // Formu temizle ve modal'ı kapat
                 closeModal();
@@ -516,7 +678,7 @@ function createApiKey() {
         .catch(error => {
             if (error.message !== 'Yetkisiz erişim') {
                 console.error('API anahtarı oluşturulurken hata:', error);
-                alert('API anahtarı oluşturulurken bir hata oluştu.');
+                showToast('API anahtarı oluşturulurken bir hata oluştu.', 'error');
             }
         });
 }
@@ -524,7 +686,7 @@ function createApiKey() {
 // API anahtarını düzenle - Modal'ı aç
 function editApiKey(keyId) {
     // Mevcut API anahtarı bilgilerini getir
-    fetchAPI(`/admin/get_api_key/${keyId}`)
+    fetchAPI(`/admin/keys/${keyId}`)
         .then(data => {
             if (data.error) {
                 alert(`Hata: ${data.error}`);
@@ -578,15 +740,15 @@ function updateApiKey() {
         auto_reset: autoReset
     };
 
-    fetchAPI(`/admin/update_api_key/${keyId}`, {
+    fetchAPI(`/admin/keys/${keyId}`, {
         method: 'PUT',
         body: JSON.stringify(requestData)
     })
         .then(data => {
             if (data.error) {
-                alert(`Hata: ${data.error}`);
+                showToast(`Hata: ${data.error}`, 'error');
             } else {
-                alert(data.message || 'API anahtarı başarıyla güncellendi.');
+                showToast(data.message || 'API anahtarı başarıyla güncellendi.', 'success');
 
                 // Modal'ı kapat
                 closeModal();
@@ -598,14 +760,14 @@ function updateApiKey() {
         .catch(error => {
             if (error.message !== 'Yetkisiz erişim') {
                 console.error('API anahtarı güncellenirken hata:', error);
-                alert('API anahtarı güncellenirken bir hata oluştu.');
+                showToast('API anahtarı güncellenirken bir hata oluştu.', 'error');
             }
         });
 }
 
 // API anahtarı bilgilerini getir
 function getApiKeyDetails(keyId) {
-    fetchAPI(`/admin/get_api_key/${keyId}`)
+    fetchAPI(`/admin/keys/${keyId}`)
         .then(data => {
             if (data.error) {
                 alert(`Hata: ${data.error}`);
@@ -684,7 +846,7 @@ function getApiKeyDetails(keyId) {
                             </div>
                             
                             <div class="flex justify-end space-x-2 mt-6">
-                                <button type="button" id="closeDetailsBtn" class="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2">Kapat</button>
+                                <button type="button" id="closeDetailsBtn" class="px-3 py-1.5 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2">Kapat</button>
                             </div>
                         </div>
                     </div>

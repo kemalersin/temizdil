@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temiz Dil API - Yönetici Paneli</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -53,7 +53,7 @@
                                 <input type="password" name="password" class="w-full rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 block p-2.5" id="password" placeholder="Yönetici şifresini girin" required>
                                 <p class="mt-2 text-sm text-gray-500">Yönetici paneline erişmek için şifrenizi girin.</p>
                             </div>
-                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Giriş Yap</button>
+                            <button type="submit" class="px-3 py-1.5 text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Giriş Yap</button>
                             <a href="/" class="ml-4 text-blue-600 hover:text-blue-800 font-medium">Ana Sayfaya Dön</a>
                         </form>
                         {% if error %}
@@ -64,8 +64,8 @@
             {% else %}
                 <!-- Yönetici Paneli -->
                 <div class="flex justify-end mb-4">
-                    <a href="/admin/logout" class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 mr-2">Çıkış Yap</a>
-                    <a href="/" class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Ana Sayfa</a>
+                    <a href="/admin/logout" class="px-3 py-1.5 text-sm bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 mr-2">Çıkış Yap</a>
+                    <a href="/" class="px-3 py-1.5 text-sm bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Ana Sayfa</a>
                 </div>
                 
                 <!-- Sekmeler (Tabs) -->
@@ -154,13 +154,13 @@
                                             </tr>
                                             
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/list_api_keys</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/keys</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                                 <td class="px-6 py-4">Tüm API anahtarlarını listeler.</td>
                                                 <td class="px-6 py-4 text-sm">
                                                     <div class="mb-2">
                                                         <span class="font-medium">İstek:</span>
-                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/list_api_keys
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/keys
 Authorization: Bearer [admin_şifresi]
 Accept: application/json</pre>
                                                     </div>
@@ -183,13 +183,13 @@ Accept: application/json</pre>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/get_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/keys/{key_id}</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">GET</td>
                                                 <td class="px-6 py-4">Belirli bir ID'ye sahip API anahtarını getirir.</td>
                                                 <td class="px-6 py-4 text-sm">
                                                     <div class="mb-2">
                                                         <span class="font-medium">İstek:</span>
-                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/get_api_key/1
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">GET /admin/keys/1
 Authorization: Bearer [admin_şifresi]
 Accept: application/json</pre>
                                                     </div>
@@ -213,13 +213,13 @@ Accept: application/json</pre>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/create_api_key</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/keys</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">POST</td>
                                                 <td class="px-6 py-4">Yeni API anahtarı oluşturur.</td>
                                                 <td class="px-6 py-4 text-sm">
                                                     <div class="mb-2">
                                                         <span class="font-medium">İstek:</span>
-                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">POST /admin/create_api_key
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">POST /admin/keys
 Authorization: Bearer [admin_şifresi]
 Accept: application/json
 Content-Type: application/json
@@ -240,13 +240,13 @@ Content-Type: application/json
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/update_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/keys/{key_id}</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">PUT</td>
                                                 <td class="px-6 py-4">Belirtilen API anahtarının özelliklerini günceller.</td>
                                                 <td class="px-6 py-4 text-sm">
                                                     <div class="mb-2">
                                                         <span class="font-medium">İstek:</span>
-                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">PUT /admin/update_api_key/1
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">PUT /admin/keys/1
 Authorization: Bearer [admin_şifresi]
 Accept: application/json
 Content-Type: application/json
@@ -267,13 +267,13 @@ Content-Type: application/json
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/delete_api_key/{key_id}</code></td>
+                                                <td class="px-6 py-4 whitespace-nowrap"><code class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200 px-1 py-0.5 rounded">/admin/keys/{key_id}</code></td>
                                                 <td class="px-6 py-4 whitespace-nowrap">DELETE</td>
                                                 <td class="px-6 py-4">Belirtilen API anahtarını siler.</td>
                                                 <td class="px-6 py-4 text-sm">
                                                     <div class="mb-2">
                                                         <span class="font-medium">İstek:</span>
-                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">DELETE /admin/delete_api_key/1
+                                                        <pre class="code-block p-2 rounded mt-1 text-xs overflow-x-auto">DELETE /admin/keys/1
 Authorization: Bearer [admin_şifresi]
 Accept: application/json</pre>
                                                     </div>
@@ -388,7 +388,7 @@ Accept: application/json</pre>
                                     
                                     <div class="mt-6">
                                         <h5 class="font-medium text-dark mb-2">Örnek Curl Komutu</h5>
-                                        <pre class="code-block p-3 rounded text-xs overflow-x-auto">curl -X GET "https://yourdomain.com/admin/list_api_keys" \
+                                        <pre class="code-block p-3 rounded text-xs overflow-x-auto">curl -X GET "https://temizdil.apimapi.com/admin/keys" \
     -H "Authorization: Bearer admin_password" \
     -H "Accept: application/json" \
     -H "Content-Type: application/json"</pre>
@@ -399,11 +399,11 @@ Accept: application/json</pre>
                                         <pre class="code-block p-3 rounded text-xs overflow-x-auto">import requests
 
 admin_password = "your_admin_password"
-base_url = "https://yourdomain.com"
+base_url = "https://temizdil.apimapi.com"
 
 # API anahtarlarını listele
 response = requests.get(
-    f"{base_url}/admin/list_api_keys",
+    f"{base_url}/admin/keys",
     headers={
         "Authorization": f"Bearer {admin_password}",
         "Accept": "application/json"
@@ -456,8 +456,8 @@ else:
                                     </div>
                                 </div>
                                 <div class="flex justify-end">
-                                    <button type="button" id="cancelModalBtn" class="px-3 py-1 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2">İptal</button>
-                                    <button type="submit" id="submitApiKeyBtn" class="px-3 py-1 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Oluştur</button>
+                                    <button type="button" id="cancelModalBtn" class="px-3 py-1.5 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 mr-2">İptal</button>
+                                    <button type="submit" id="submitApiKeyBtn" class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Oluştur</button>
                                 </div>
                             </form>
                         </div>
@@ -485,8 +485,8 @@ else:
     </script>
     <!-- Admin paneli için JavaScript -->
     {% if logged_in %}
-    <script src="/static/admin.js"></script>
+    <script src="/static/js/admin.js"></script>
     {% endif %}
-    <script src="/static/theme.js"></script>
+    <script src="/static/js/theme.js"></script>
 </body>
 </html> 
