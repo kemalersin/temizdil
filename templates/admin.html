@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temiz Dil API - Yönetici Paneli</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="/static/js/tailwind.min.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JEMSPK75FJ"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -31,6 +31,7 @@
 
         gtag('config', 'G-JEMSPK75FJ');        
     </script>
+    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 
 <body class="min-h-screen" data-logged-in="{{ 'true' if logged_in else 'false' }}">
