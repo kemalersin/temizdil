@@ -177,4 +177,4 @@ Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.
 
 ## İletişim
 
-Sorularınız veya önerileriniz için [email@example.com](mailto:email@example.com) adresine e-posta gönderebilirsiniz. 
+Sorularınız veya önerileriniz için [info@apimapi.com](mailto:info@apimapi.com) adresine e-posta gönderebilirsiniz. 
